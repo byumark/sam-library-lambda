@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  BookTable:
+    Type: AWS::Serverless::SimpleTable
+  Books:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs8.10
+      CodeUri: ./api
+      Handler: books.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BookTable
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        AddBook:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: post
+        ListBooks:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: get
+        Book:
+          Type: Api
+          Properties:
+            Path: /books/{id}
+            Method: any
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
